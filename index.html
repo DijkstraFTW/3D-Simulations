@@ -1,0 +1,150 @@
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>Morocco's Elevation Shader</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .maps {
+            color: white;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            background-color: black;
+        }
+        
+        .texture {
+            max-width: 120px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="maps">
+        Color Map
+        <img class="texture" src="/images/textures.png"> Heightmap
+        <img class="texture" src="/images/heightmap.png"> Normal map
+        <img class="texture" src="/images/normals.png"> Specular map
+        <img class="texture" src="/images/specular.png"> Ambient Occlusion map
+        <img class="texture" src="/images/ambientOc.png">
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.122.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/16/Stats.js" integrity="sha512-7a6Pb3sYHqFdirEUOBR8FEYTeumj7SOjgpHeCPKY6kuTpkAK+KiTQmDNKkvBRwOfOoPeJZ/zShiKP19THvWqsQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.js"></script>
+    <script>
+        var renderer = new THREE.WebGLRenderer();
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000);
+
+        var scene = new THREE.Scene();
+
+        scene.background = new THREE.Color(0, 0, 0);
+
+        // loading different textures
+        var textureLoader = new THREE.TextureLoader();
+        var heightmap = textureLoader.load('images/heightmap.png');
+        var textures = textureLoader.load('images/textures.png');
+        var normals = textureLoader.load('images/normals.png');
+        var speculars = textureLoader.load('images/specular.png');
+        var ambientOc = textureLoader.load('images/ambientOc.png');
+
+
+        var geo = new THREE.PlaneGeometry(16, 16, 256, 256);
+
+        var material = new THREE.MeshPhongMaterial();
+
+        material.map = textures;
+
+        material.bumpMap = heightmap;
+        material.bumpScale = 100;
+
+        material.displacementMap = heightmap;
+        material.displacementScale = 1;
+
+        material.normalMap = normals;
+        material.normalScale.set(2, 2);
+
+        material.specularMap = speculars;
+        material.shininess = 40;
+
+        material.aoMap = ambientOc;
+        material.aoMapIntensity = 0.5;
+
+        var plane = new THREE.Mesh(geo, material);
+        scene.add(plane);
+
+
+        // Ambient light
+        var ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(ambientLight);
+
+        // Point light
+        const pointLight = new THREE.PointLight(0xffffff, 0.5)
+        pointLight.position.set(0, 40, 10)
+        scene.add(pointLight)
+
+        // Camera's position
+        camera.position.z = 40;
+
+        // Controls
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.minDistance = 2;
+        controls.maxDistance = 30;
+
+
+        // GUI
+        var gui = new dat.GUI();
+
+        var mat = gui.addFolder("Material")
+        mat.add(material, 'visible')
+        mat.add(material, 'bumpScale', 0, 10, 0.1);
+        mat.add(material, 'displacementScale', 0, 10, 0.1);
+        mat.add(material, 'shininess', 0, 100)
+        mat.add(material, 'aoMapIntensity', 0, 2.5)
+        mat.add(material, 'wireframe')
+
+        var ambientLightGUI = gui.addFolder('Ambient light')
+        ambientLightGUI.add(ambientLight, 'visible');
+        ambientLightGUI.add(ambientLight, 'intensity', 0, 2);
+
+        var pointLightGUI = gui.addFolder('Point light')
+        pointLightGUI.add(pointLight, 'visible');
+        pointLightGUI.add(pointLight, 'intensity', 0, 2);
+        pointLightGUI.add(pointLight.position, 'y', -40, 40);
+        pointLightGUI.add(pointLight.position, 'x', -40, 40);
+        pointLightGUI.add(pointLight.position, 'z', -40, 40);
+
+
+        // Stats
+        var stats = new Stats();
+        stats.showPanel(0);
+        document.body.appendChild(stats.domElement);
+
+
+        function animate() {
+
+            controls.update();
+
+            stats.update();
+
+            requestAnimationFrame(animate);
+
+            renderer.render(scene, camera);
+
+        }
+        animate();
+    </script>
+</body>
+
+</html>
