@@ -70,28 +70,28 @@
         material.bumpScale = 100;
 
         material.displacementMap = heightmap;
-        material.displacementScale = 1;
+        material.displacementScale = 1.2;
 
         material.normalMap = normals;
         material.normalScale.set(2, 2);
 
         material.specularMap = speculars;
-        material.shininess = 40;
+        material.shininess = 63;
 
         material.aoMap = ambientOc;
-        material.aoMapIntensity = 0.5;
+        material.aoMapIntensity = 0.67;
 
         var plane = new THREE.Mesh(geo, material);
         scene.add(plane);
 
 
         // Ambient light
-        var ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        var ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
         scene.add(ambientLight);
 
         // Point light
-        const pointLight = new THREE.PointLight(0xffffff, 0.5)
-        pointLight.position.set(0, 40, 10)
+        const pointLight = new THREE.PointLight(0xffffff, 0.64)
+        pointLight.position.set(-27, -16, 18)
         scene.add(pointLight)
 
         // Camera's position
