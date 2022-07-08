@@ -28,11 +28,11 @@
 
     <div class="maps">
         Color Map
-        <img class="texture" src="images/textures.png"> Heightmap
-        <img class="texture" src="images/heightmap.png"> Normal map
-        <img class="texture" src="images/normals.png"> Specular map
-        <img class="texture" src="images/specular.png"> Ambient Occlusion map
-        <img class="texture" src="images/ambientOc.png">
+        <img class="texture" src="images/morocco_map/textures.png"> Heightmap
+        <img class="texture" src="images/morocco_map/heightmap.png"> Normal map
+        <img class="texture" src="images/morocco_map/normals.png"> Specular map
+        <img class="texture" src="images/morocco_map/specular.png"> Ambient Occlusion map
+        <img class="texture" src="images/morocco_map/ambientOc.png">
     </div>
 
 
@@ -53,11 +53,11 @@
 
         // loading different textures
         var textureLoader = new THREE.TextureLoader();
-        var heightmap = textureLoader.load('images/heightmap.png');
-        var textures = textureLoader.load('images/textures.png');
-        var normals = textureLoader.load('images/normals.png');
-        var speculars = textureLoader.load('images/specular.png');
-        var ambientOc = textureLoader.load('images/ambientOc.png');
+        var heightmap = textureLoader.load('images/morocco_map/heightmap.png');
+        var textures = textureLoader.load('images/morocco_map/textures.png');
+        var normals = textureLoader.load('images/morocco_map/normals.png');
+        var speculars = textureLoader.load('images/morocco_map/specular.png');
+        var ambientOc = textureLoader.load('images/morocco_map/ambientOc.png');
 
 
         var geo = new THREE.PlaneGeometry(16, 16, 256, 256);
