@@ -46,8 +46,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.js"></script>
 
     <div class="moon-phases">
-        <h2>Percentage illuminated : </h2>
-        <span id="percentage"></span>
+        <h2>Phase : </h2>
+        <span id="phase"></span>
 
         <h2>Day of the month : </h2>
         <span id="day"></span>
@@ -133,6 +133,7 @@
             var orbitRadiusMoonX = 0.2;
             var orbitRadiusMoonY = 0.6;
             var date = Date.now() * 0.0001;
+            var phase = "blank";
 
             render();
 
@@ -140,15 +141,47 @@
 
                 controls.update();
 
-                date = Date.now() * 0.001;
+                date = Date.now() * 0.0001;
 
                 light.position.set(Math.cos(date) * orbitRadiusSun, 0, Math.sin(date) * orbitRadiusSun);
                 sphere.position.set(Math.cos(date) * orbitRadiusMoonX, 0, Math.sin(date) * orbitRadiusMoonY);
 
-                sphere.rotation.y += Math.cos(date) * 0.0022;
+                //light.position.set(-4, 0, -8);
 
-                document.getElementById('percentage').innerText = (Math.cos(date) * orbitRadiusSun).toFixed(2) + ' ' + (Math.sin(date) * orbitRadiusSun).toFixed(2)
-                    //document.getElementById('day').innerText = sphere.rotation.x.toFixed(2) + ' ' + sphere.rotation.y.toFixed(2)
+                sphere.rotation.y += Math.cos(date) * 0.000022;
+
+                //console.log(light.position.y);
+
+                //><
+
+                if (light.position.x > -4 & light.position.z < -8 & light.position.x < 0) {
+                    phase = "New Moon";
+                }
+                if (light.position.x < 10 & light.position.z > -3 & light.position.x > 0) {
+                    phase = "Waxing Crescent";
+                }
+                if (light.position.x < 9 & light.position.z > -1 & light.position.x > 0) {
+                    phase = "First Quarter";
+                }
+                if (light.position.x < 7 & light.position.z > 5 & light.position.x > 0) {
+                    phase = "Waxing Gibbous";
+                }
+                if (light.position.x < 0 & light.position.z > 9) {
+                    phase = "Full Moon";
+                }
+                if (light.position.x < -7 & light.position.z < 5 & light.position.x < 0) {
+                    phase = "Waning Gibbous";
+                }
+                if (light.position.x < -9 & light.position.z < -1 & light.position.x < 0) {
+                    phase = "Third Quarter";
+                }
+                if (light.position.x > -10 & light.position.z < -3 & light.position.x < 0) {
+                    phase = "Waning Crescent";
+                }
+
+
+                document.getElementById('phase').innerText = phase;
+                document.getElementById('day').innerText = light.position.x.toFixed(2) + ' ' + light.position.z.toFixed(2);
 
 
                 requestAnimationFrame(render);
