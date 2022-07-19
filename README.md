@@ -7,7 +7,7 @@
 
 A basic 3D realistic map of Morocco using Three.js's built-in tools. 
 
-Try at : https://dijkstraftw.github.io/3D-Simulations/morocco_map.html
+[Demo](https://dijkstraftw.github.io/3D-Simulations/morocco_map.htm)
 
 <br />
 
