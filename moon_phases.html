@@ -7,6 +7,7 @@
         body {
             margin: 0;
             overflow: hidden;
+            font-family: 'Montserrat';
         }
         
         canvas {
@@ -15,7 +16,7 @@
             height: 200px;
             left: 500px;
             top: 30px;
-            /* border-radius: 16px; */
+            border-radius: 8px;
         }
         
         #content {
@@ -52,7 +53,7 @@
         <h2>Day of the month : </h2>
         <span id="day"></span>
         <script>
-            //const canvas = document.querySelector('content');
+            //const moon_canvas = document.querySelector('content');
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize(550, 300);
             document.body.appendChild(renderer.domElement);
@@ -76,10 +77,8 @@
 
             material.map = colormap;
 
-            // todo normals + others toggle
-
-            // material.normalMap = normalmap;
-            // material.normalScale.set(0.1, 0.1);
+            material.bumpMap = heightmap;
+            material.bumpScale = 0.07;
 
             material.specularMap = speculars;
             material.shininess = 20;
@@ -87,16 +86,19 @@
             material.aoMap = ambientOc;
             material.aoMapIntensity = 1;
 
+            material.displacementMap = displacementmapI;
+            material.displacementScale = 0.1;
+
             var sphere = new THREE.Mesh(geo, material);
             sphere.rotation.y = 5;
             sphere.rotation.x = -0.1;
 
             scene.add(sphere);
 
-            var ambientLight = new THREE.AmbientLight(0x333333, 0.2)
+            var ambientLight = new THREE.AmbientLight(0x333333, 0.4)
             scene.add(ambientLight);
 
-            var light = new THREE.DirectionalLight(0xffffff, 1);
+            var light = new THREE.DirectionalLight(0xffffff, 1.4);
             light.position.set(0, 0, 10);
             light.target.position.set(0, 0, 0);
             scene.add(light);
@@ -105,7 +107,7 @@
             const helper = new THREE.DirectionalLightHelper(light);
             scene.add(helper);
 
-            // Controls
+            // Controls ( will be removed)
             var controls = new THREE.OrbitControls(camera, renderer.domElement);
             controls.minDistance = 2;
             controls.maxDistance = 30;
@@ -113,27 +115,32 @@
             // GUI
             var gui = new dat.GUI();
 
-            var mat = gui.addFolder("Material")
-            mat.add(material, 'wireframe')
+            //gui.add(speed, 'speed');
 
-            var ambientLightGUI = gui.addFolder('Ambient light')
+            var mat = gui.addFolder("Material");
+            mat.add(material, 'wireframe');
+
+            var ambientLightGUI = gui.addFolder('Ambient light');
             ambientLightGUI.add(ambientLight, 'visible');
             ambientLightGUI.add(ambientLight, 'intensity', 0, 2);
 
-            var LightGUI = gui.addFolder('Light')
+            var LightGUI = gui.addFolder('Light');
             LightGUI.add(light, 'visible');
             LightGUI.add(light, 'intensity', 0, 2);
             LightGUI.add(light.position, 'y', -40, 40);
             LightGUI.add(light.position, 'x', -40, 40);
             LightGUI.add(light.position, 'z', -40, 40);
 
-            // todo rotation speed adjustement
+
 
             var orbitRadiusSun = 10;
+
             var orbitRadiusMoonX = 0.2;
             var orbitRadiusMoonY = 0.6;
-            var date = Date.now() * 0.0001;
             var phase = "blank";
+
+            var speed = 0.001;
+            var date = Date.now() * speed;
 
             render();
 
@@ -141,47 +148,52 @@
 
                 controls.update();
 
-                date = Date.now() * 0.0001;
+                date = Date.now() * speed;
 
                 light.position.set(Math.cos(date) * orbitRadiusSun, 0, Math.sin(date) * orbitRadiusSun);
-                sphere.position.set(Math.cos(date) * orbitRadiusMoonX, 0, Math.sin(date) * orbitRadiusMoonY);
+                //sphere.position.set(Math.cos(date) * orbitRadiusMoonX, 0, Math.sin(date) * orbitRadiusMoonY);
 
-                //light.position.set(-4, 0, -8);
+                //light.position.set(8, 0, -1);
 
-                sphere.rotation.y += Math.cos(date) * 0.000022;
+                sphere.rotation.z += -Math.cos(date) * speed;
 
-                //console.log(light.position.y);
 
-                //><
-
-                if (light.position.x > -4 & light.position.z < -8 & light.position.x < 0) {
+                if (light.position.x > -3 & light.position.z < -9) {
                     phase = "New Moon";
+                    //console.log("change");
+                    speed = 0.001;
+                    //console.log(light.position.x, +' ' + light.position.z);
                 }
-                if (light.position.x < 10 & light.position.z > -3 & light.position.x > 0) {
+                if (light.position.x == 7 & light.position.z == -4) {
+                    speed = 0.0001;
+                    //console.log("revert");
+                    //console.log(light.position.x, +' ' + light.position.z);
+                }
+                if (light.position.x < 10 & light.position.z > -5 & light.position.x > 0) {
                     phase = "Waxing Crescent";
                 }
-                if (light.position.x < 9 & light.position.z > -1 & light.position.x > 0) {
+                if (light.position.x < 10 & light.position.z > 0 & light.position.x > 0) {
                     phase = "First Quarter";
                 }
-                if (light.position.x < 7 & light.position.z > 5 & light.position.x > 0) {
+                if (light.position.x < 8 & light.position.z > 5 & light.position.x > 0) {
                     phase = "Waxing Gibbous";
                 }
-                if (light.position.x < 0 & light.position.z > 9) {
+                if (light.position.x < 6 & light.position.z > 4) {
                     phase = "Full Moon";
                 }
-                if (light.position.x < -7 & light.position.z < 5 & light.position.x < 0) {
+                if (light.position.x < -3 & light.position.z < 5 & light.position.x < 0) {
                     phase = "Waning Gibbous";
                 }
-                if (light.position.x < -9 & light.position.z < -1 & light.position.x < 0) {
+                if (light.position.x < -9 & light.position.z < 3 & light.position.x < 0) {
                     phase = "Third Quarter";
                 }
                 if (light.position.x > -10 & light.position.z < -3 & light.position.x < 0) {
                     phase = "Waning Crescent";
                 }
 
-
                 document.getElementById('phase').innerText = phase;
                 document.getElementById('day').innerText = light.position.x.toFixed(2) + ' ' + light.position.z.toFixed(2);
+                //console.log(light.position.x.toFixed(2) + ' ' + light.position.z.toFixed(2));
 
 
                 requestAnimationFrame(render);
